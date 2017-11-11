@@ -133,8 +133,8 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
           case "displayGraph":
               this.displayGraph(msg);
               break;
-          case "showPDB":
-              this.showPDB(msg);
+          case "showGenomicRegion":
+              this.showGenomicRegion(msg);
               break;
           default:
               alert("dispatchRequest: unrecognized msg.cmd: " + msg.cmd);
@@ -205,6 +205,16 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
         setTimeout(function(){
 	    self.igvBrowser = self.initializeIGV("hg38");},0);
         }, // setGenome
+
+     //--------------------------------------------------------------------------------
+     showGenomicRegion: function(msg){
+
+       $('a[href="#igvTab"]').click();
+        var self = this;
+        console.log("about to showGenomicRegion: " + msg.payload);
+        setTimeout(function(){
+	    self.igvBrowser.search(msg.payload);},0);
+        }, // showGenomicRegion
 
      //--------------------------------------------------------------------------------
      displayGraph: function(msg){

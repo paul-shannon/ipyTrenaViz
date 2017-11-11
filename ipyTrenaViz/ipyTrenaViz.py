@@ -38,5 +38,6 @@ class ipyTrenaViz(widgets.DOMWidget):
     def showPDB(self, pdbID):
        self.msgFromKernel = json.dumps({"cmd": "showPDB", "status": "request", "callback": "", "payload": pdbID})
 
-
+    def showGenomicRegion(self, regionString):
+       self.msgFromKernel = json.dumps({"cmd": "showGenomicRegion", "status": "request", "callback": "", "payload": regionString})
 

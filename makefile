@@ -17,4 +17,4 @@ run:
 
 
 image:
-	docker build -t nbtabbedwidgets .
+	docker build -t ipytrenaviz .
