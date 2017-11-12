@@ -136,6 +136,9 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
           case "showGenomicRegion":
               this.showGenomicRegion(msg);
               break;
+         case "cleanSlate":
+              console.log("slate-cleaning msg received");
+              break;
           default:
               alert("dispatchRequest: unrecognized msg.cmd: " + msg.cmd);
           } // switch
@@ -177,24 +180,33 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
 	    flanking: 1000,
 	    showRuler: true,
 
-	    reference: {
-		id: "hg38",
-		fastaURL: "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/hg38/hg38.fa",
-		cytobandURL: "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg38/cytoBandIdeo.txt"
+	    reference: {id: "hg38",
+                fastaURL: "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/hg38/hg38.fa",
+             cytobandURL: "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg38/cytoBandIdeo.txt"
             },
 	    tracks: [
-		{name: 'Gencode v24',
-		 url: "//s3.amazonaws.com/igv.broadinstitute.org/annotations/hg38/genes/gencode.v24.annotation.sorted.gtf.gz",
-		 indexURL: "//s3.amazonaws.com/igv.broadinstitute.org/annotations/hg38/genes/gencode.v24.annotation.sorted.gtf.gz.tbi",
-		 format: 'gtf',
-		 visibilityWindow: 2000000,
-		 displayMode: 'EXPANDED'
-		},
-            ]
-	}; // hg38_options
+                 {name: 'Gencode v24',
+                       url: "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg38/genes/gencode.v24.annotation.sorted.gtf.gz",
+                  indexURL: "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg38/genes/gencode.v24.annotation.sorted.gtf.gz.tbi",
+                  type: 'annotation',
+                  format: 'gtf',
+                  visibilityWindow: 500000,
+                  displayMode: 'EXPANDED',
+                  color: 'darkGreen',
+                  height: 300,
+                  searchable: true
+                  },
+	          ]
+          }; // hg38_options
 
        var igvOptions = hg38_options;
        var igvBrowser = igv.createBrowser($("#igvDiv"), igvOptions);
+       var self = this;
+       igvBrowser.on('locuschange',
+            function(referenceFrame, chromLocString){
+               self.updateStateToKernel(self, {"chromLocString": chromLocString});
+               });
+       window.igvpshannon = igvBrowser
        return(igvBrowser)
        },
 
@@ -211,9 +223,11 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
 
        $('a[href="#igvTab"]').click();
         var self = this;
-        console.log("about to showGenomicRegion: " + msg.payload);
-        setTimeout(function(){
-	    self.igvBrowser.search(msg.payload);},0);
+        var locString = msg.payload;
+        console.log("about to showGenomicRegion: '" + locString + "'");
+        //setTimeout(function(){
+	 self.igvBrowser.search(locString);
+        //},0);
         }, // showGenomicRegion
 
      //--------------------------------------------------------------------------------

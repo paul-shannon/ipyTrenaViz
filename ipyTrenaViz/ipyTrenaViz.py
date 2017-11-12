@@ -19,10 +19,16 @@ class ipyTrenaViz(widgets.DOMWidget):
        payload = {"tabNumber": tabNumber, "msg": msg};
        self.msgFromKernel = json.dumps({"cmd": "writeToTab", "status": "request", "callback": "", "payload": payload})
 
+        # messages are only transmitted to the browser when it changes; duplicate messages are simply ignored.
+        # this next method ensures that any ensuing message is seen as novel in the browser
+    def _resetMessage(self):
+       self.msgFromKernel = json.dumps({"cmd": "cleanSlate", "status": "nop", "callback": "", "payload": ""});
+
     def raiseTab(self, tabName):
        self.msgFromKernel = json.dumps({"cmd": "raiseTab", "status": "request", "callback": "", "payload": tabName})
 
     def getBrowserState(self):
+
         return(json.loads(self._browserState));
 
     def getRequestCount(self):
@@ -39,5 +45,6 @@ class ipyTrenaViz(widgets.DOMWidget):
        self.msgFromKernel = json.dumps({"cmd": "showPDB", "status": "request", "callback": "", "payload": pdbID})
 
     def showGenomicRegion(self, regionString):
+       self._resetMessage();
        self.msgFromKernel = json.dumps({"cmd": "showGenomicRegion", "status": "request", "callback": "", "payload": regionString})
 
