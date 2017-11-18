@@ -33,9 +33,9 @@ class ipyTrenaViz(widgets.DOMWidget):
     def getRequestCount(self):
         return(self.getBrowserState()["requestCount"])
 
-    def displayGraph(self):
-       #payload = {"tabNumber": tabNumber, "msg": msg};
-       self.msgFromKernel = json.dumps({"cmd": "displayGraph", "status": "request", "callback": "", "payload": ""})
+    def displayGraph(self, filename, modelNames):
+       payload = {"filename": filename, "modelNames": modelNames}
+       self.msgFromKernel = json.dumps({"cmd": "displayGraph", "status": "request", "callback": "", "payload": payload})
 
     def setGenome(self):
        self.msgFromKernel = json.dumps({"cmd": "setGenome", "status": "request", "callback": "", "payload": "hg38"})

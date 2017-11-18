@@ -278,12 +278,35 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
          }, // addBedTrackFromDataFrame
 
      //--------------------------------------------------------------------------------
+     readNetworkFromFile: function(filename, targetCy){
+         //var s = window.location.href + "?" + filename;
+	fetch(filename)
+           .then(function(responseObj){
+               console.log("fetch in action");
+               return responseObj.json();
+               })
+           .then(function(j){
+              targetCy.json(j);
+              return "success";
+              });
+
+         return "SUCCESS";
+         }, // readNetworkFromFile
+
+     //--------------------------------------------------------------------------------
      displayGraph: function(msg){
        $('a[href="#cyjsTab"]').click();
         var self = this;
         self.cyjs = self.createCyjs();
-        setTimeout(function(){self.cyjs.fit(100);}, 500);
 
+        setTimeout(function(){self.cyjs.fit(100);}, 500);
+        var filename = msg.payload.filename;
+	var modelNames = msg.payload.modelNames
+        if(typeof(modelNames) == "string")
+           modelNames = [modelNames];
+        console.log("about to load file into cyjs: " + filename)
+        console.log("     for modelNames[0]: " + modelNames[0]);
+        self.readNetworkFromFile(filename, self.cyjs)
         }, // displayGraph
 
 
