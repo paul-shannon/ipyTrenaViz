@@ -65,8 +65,8 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
    //--------------------------------------------------------------------------------
     createCyjs: function(){
         var options = {container: $("#cyjsDiv"),
-                       elements: {nodes: [{data: {id:'a'}}],
-				  edges: [{data:{source:'a', target:'a'}}]},
+                       //elements: {nodes: [{data: {id:'a'}}],
+		       //           edges: [{data:{source:'a', target:'a'}}]},
                        style: cytoscape.stylesheet()
                        .selector('node').style({'background-color': '#ddd',
 						'label': 'data(id)',
