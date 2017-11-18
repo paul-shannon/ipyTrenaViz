@@ -4,6 +4,9 @@ var cytoscape = require('cytoscape');
 var igv = require('igv')
 require('igv/igv.css')
 
+//var igv = require('igv')
+//require('igv/igv.css')
+
 // Custom Model. Custom widgets models must at least provide default values
 // for model attributes, including
 //
@@ -136,7 +139,10 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
           case "showGenomicRegion":
               this.showGenomicRegion(msg);
               break;
-         case "cleanSlate":
+          case "addBedTrackFromDataFrame":
+	      this.addBedTrackFromDataFrame(msg);
+	      break;
+          case "cleanSlate":
               console.log("slate-cleaning msg received");
               break;
           default:
@@ -177,7 +183,7 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
 
 	var hg38_options = {
 	    minimumBases: 5,
-	    flanking: 1000,
+	    flanking: 2000,
 	    showRuler: true,
 
 	    reference: {id: "hg38",
@@ -186,15 +192,14 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
             },
 	    tracks: [
                  {name: 'Gencode v24',
-                       url: "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg38/genes/gencode.v24.annotation.sorted.gtf.gz",
+                  url: "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg38/genes/gencode.v24.annotation.sorted.gtf.gz",
                   indexURL: "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg38/genes/gencode.v24.annotation.sorted.gtf.gz.tbi",
                   type: 'annotation',
                   format: 'gtf',
                   visibilityWindow: 500000,
                   displayMode: 'EXPANDED',
-                  color: 'darkGreen',
-                  height: 300,
-                  searchable: true
+                  color: 'black',
+                  height: 300
                   },
 	          ]
           }; // hg38_options
@@ -206,7 +211,7 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
             function(referenceFrame, chromLocString){
                self.updateStateToKernel(self, {"chromLocString": chromLocString});
                });
-       window.igvpshannon = igvBrowser
+       window.igvpshannon = igvBrowser  // for debugging
        return(igvBrowser)
        },
 
@@ -229,6 +234,48 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
 	 self.igvBrowser.search(locString);
         //},0);
         }, // showGenomicRegion
+
+     //--------------------------------------------------------------------------------
+     addBedTrackFromDataFrame: function(msg){
+
+        console.log("ipyTrenaViz/ipytrenaviz.js, addBedTrackFromDataFrame");
+        var self = this;
+        console.log("--- self:");
+	console.log(self)
+	console.log("--- self.igvBrowser:");
+	console.log(self.igvBrowser)
+        //var trackName = msg.payload.name;
+        //var bedFileName = msg.payload.bedFileName;
+        var trackName = "foo";
+        var bedFileName = "tmp.bed";
+        //var displayMode = msg.payload.displayMode;
+        var displayMode = "EXPANDED"
+        //var color = msg.payload.color;
+        var color = "red";
+
+        var href = window.location.href;
+	var border = href.indexOf("/notebooks");
+	var url = href.substring(0, border) + "/edit/" + bedFileName;
+        //var url = window.location.href + "?" + bedFileName;
+	//var url = "http://localhost:8871/edit/shared/tbl.bed";
+        // this full url works with jupy: "http://localhost:9999/tree/shared/tmp.bed"
+        // note use of "tree" - not edit, not terminal, not notebooks
+        url = msg.payload.url
+        var config = {format: "bed",
+                      name: trackName,
+                      url: url,
+                      indexed: false,
+                      displayMode: displayMode,
+                      sourceType: "file",
+                      color: color,
+                      type: "annotation"};
+         console.log(config);
+         console.log(JSON.stringify(config))
+         window.loadTrackResult = self.igvBrowser.loadTrack(config);
+	 console.log("---- result of loadTrack:");
+	 console.log(window.loadTrackResult);
+	 console.log("after self.igvBrowser.loadTrack");
+         }, // addBedTrackFromDataFrame
 
      //--------------------------------------------------------------------------------
      displayGraph: function(msg){

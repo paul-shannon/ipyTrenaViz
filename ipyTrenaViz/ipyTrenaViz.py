@@ -28,7 +28,6 @@ class ipyTrenaViz(widgets.DOMWidget):
        self.msgFromKernel = json.dumps({"cmd": "raiseTab", "status": "request", "callback": "", "payload": tabName})
 
     def getBrowserState(self):
-
         return(json.loads(self._browserState));
 
     def getRequestCount(self):
@@ -47,4 +46,16 @@ class ipyTrenaViz(widgets.DOMWidget):
     def showGenomicRegion(self, regionString):
        self._resetMessage();
        self.msgFromKernel = json.dumps({"cmd": "showGenomicRegion", "status": "request", "callback": "", "payload": regionString})
+
+    def addBedTrackFromDataFrame(self, url):
+       self._resetMessage();
+       payload = {"trackName": "fp",
+                  "bedFileName": "tbl.bed",
+                  "displayMode": "EXPANDED",
+                  "color": "lightgreen",
+                  "url": url}
+       self.msgFromKernel = json.dumps({"cmd": "addBedTrackFromDataFrame", "status": "request",
+                                        "callback": "", "payload": payload})
+
+
 
