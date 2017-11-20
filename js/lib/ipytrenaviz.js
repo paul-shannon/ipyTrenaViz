@@ -4,6 +4,8 @@ var cytoscape = require('cytoscape');
 var igv = require('igv')
 require('igv/igv.css')
 
+require('../css/ipytrenaviz.css')
+
 //var igv = require('igv')
 //require('igv/igv.css')
 
@@ -43,7 +45,8 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
 
    createDiv: function(){
       var self = this;
-      var tabsOuterDiv = $("<div id='tabsOuterDiv' style='border:1px solid blue; height: 800px; width: 100%'></div>");
+      var tabsOuterDiv = $("<div id='tabsOuterDiv'></div>");
+      //var tabsOuterDiv = $("<div id='tabsOuterDiv' style='border:1px solid blue; height: 800px; width: 100%'></div>");
       var tabsList = $("<ul></ul>");
       tabsList.append("<li><a href='#igvTab'>igv</a></li>");
       tabsList.append("<li><a href='#cyjsTab'>cyjs</a></li>")

@@ -1,0 +1,8 @@
+#tabsOuterDiv{
+    border: 1px solid blue;
+    border-radius: 3px;
+    height: 600px;
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: scroll;
+}
