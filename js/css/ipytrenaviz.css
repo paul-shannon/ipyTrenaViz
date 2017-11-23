@@ -1,8 +1,22 @@
 #tabsOuterDiv{
-    border: 1px solid blue;
-    border-radius: 3px;
-    height: 600px;
-    width: 100%;
-    overflow-x: scroll;
-    overflow-y: scroll;
-}
+   border: 1px solid blue;
+   border-radius: 3px;
+   height: 600px;
+   width: 100%;
+   overflow-x: scroll;
+   overflow-y: scroll;
+   }
+
+#igvDiv{
+   border: 1px solid orange;
+   border-radius: 3px;
+   height: 820px;
+   width: 100%;
+   }
+
+#cyjsDiv{
+   border: 3px solid purple;
+   border-radius: 3px;
+   height: 720px;
+   width: 100%;
+   }

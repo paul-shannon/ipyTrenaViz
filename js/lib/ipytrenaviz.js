@@ -46,17 +46,16 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
    createDiv: function(){
       var self = this;
       var tabsOuterDiv = $("<div id='tabsOuterDiv'></div>");
-      //var tabsOuterDiv = $("<div id='tabsOuterDiv' style='border:1px solid blue; height: 800px; width: 100%'></div>");
       var tabsList = $("<ul></ul>");
       tabsList.append("<li><a href='#igvTab'>igv</a></li>");
       tabsList.append("<li><a href='#cyjsTab'>cyjs</a></li>")
 
       var cyjsTab = $("<div id='cyjsTab'></div>");
-      var cyjsDiv = $("<div id='cyjsDiv' style='border:1px solid green; height: 720px; width: 100%'></div>");
+      var cyjsDiv = $("<div id='cyjsDiv'></div>");
       cyjsTab.append(cyjsDiv);
 
       var igvTab = $("<div id='igvTab'></div>");
-      var igvDiv = $("<div id='igvDiv' style='border:1px solid blue; height: 720px; width: 100%'></div>");
+      var igvDiv = $("<div id='igvDiv'></div>");
       igvTab.append(igvDiv);
 
       tabsOuterDiv.append(tabsList);
