@@ -18,3 +18,7 @@ run:
 
 image:
 	docker build -t ipytrenaviz .
+
+runDocker:
+	(cd ./examples/basicDemo; docker run -it --name ipytrenaviz bash)
+

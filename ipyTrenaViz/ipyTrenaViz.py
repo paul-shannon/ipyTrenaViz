@@ -37,8 +37,12 @@ class ipyTrenaViz(widgets.DOMWidget):
        payload = {"filename": filename, "modelNames": modelNames}
        self.msgFromKernel = json.dumps({"cmd": "displayGraph", "status": "request", "callback": "", "payload": payload})
 
-    def setGenome(self):
-       self.msgFromKernel = json.dumps({"cmd": "setGenome", "status": "request", "callback": "", "payload": "hg38"})
+    def setGenome(self, genomeName):
+       supportedGenomes = ["hg19", "hg38", "mm10"];
+       if(genomeName in supportedGenomes):
+          self.msgFromKernel = json.dumps({"cmd": "setGenome", "status": "request", "callback": "", "payload": genomeName})
+       else:
+          return("only %s genomes currently supported" % supportedGenomes)
 
     def showPDB(self, pdbID):
        self.msgFromKernel = json.dumps({"cmd": "showPDB", "status": "request", "callback": "", "payload": pdbID})

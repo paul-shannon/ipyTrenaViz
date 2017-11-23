@@ -184,11 +184,12 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
      //--------------------------------------------------------------------------------
     initializeIGV: function(genomeName){
 
-	var hg38_options = {
+       var self = this;
+
+       var hg38_options = {
 	    minimumBases: 5,
 	    flanking: 2000,
 	    showRuler: true,
-
 	    reference: {id: "hg38",
                 fastaURL: "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/hg38/hg38.fa",
              cytobandURL: "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg38/cytoBandIdeo.txt"
@@ -207,35 +208,98 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
 	          ]
           }; // hg38_options
 
-       var igvOptions = hg38_options;
-       var igvBrowser = igv.createBrowser($("#igvDiv"), igvOptions);
-       var self = this;
-       igvBrowser.on('locuschange',
+	var hg19_options = {
+	    minimumBases: 5,
+	    flanking: 2000,
+	    showRuler: true,
+	    reference: {id: "hg38"},
+	    tracks: [
+                 {name: 'Gencode v18',
+                       url: "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg19/genes/gencode.v18.collapsed.bed",
+                  indexURL: "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg19/genes/gencode.v18.collapsed.bed.idx",
+                  visibilityWindow: 2000000,
+                  displayMode: 'EXPANDED',
+		  height: 300
+                  },
+	          ]
+          }; // hg19_options
+
+
+	var mm10_options = {
+            flanking: 2000,
+	    showKaryo: false,
+            showNavigation: true,
+            minimumBases: 5,
+            showRuler: true,
+            reference: {id: "mm10",
+			fastaURL: "http://trena.systemsbiology.net/mm10/GRCm38.primary_assembly.genome.fa",
+			cytobandURL: "http://trena.systemsbiology.net/mm10/cytoBand.txt"
+                       },
+            tracks: [
+		{name: 'Gencode vM14',
+		 url: "http://trena.systemsbiology.net/mm10/gencode.vM14.basic.annotation.sorted.gtf.gz",
+		 indexURL: "http://trena.systemsbiology.net/mm10/gencode.vM14.basic.annotation.sorted.gtf.gz.tbi",
+		 indexed: true,
+		 type: 'annotation',
+		 format: 'gtf',
+		 visibilityWindow: 2000000,
+		 displayMode: 'EXPANDED',
+		 height: 300,
+		 searchable: true
+		},
+            ]
+	}; // mm10_options
+
+        var igvOptions;
+
+        console.log("=== genomeName: " + genomeName);
+
+	switch(genomeName) {
+	case "hg19":
+            igvOptions = hg19_options;
+            break;
+	case "hg38":
+            igvOptions = hg38_options;
+            break;
+	case "mm10":
+            igvOptions = mm10_options;
+            break;
+        } // switch on genoneName
+
+	// $("#igvDiv").children().remove();
+	setTimeout(function(){
+           console.log("=== about to create browser");
+           console.log("igvOptions:");
+           console.log(igvOptions);
+	   self.igvBrowser = igv.createBrowser($("#igvDiv"), igvOptions);
+           }, 0);
+
+       self.igvBrowser.on('locuschange',
             function(referenceFrame, chromLocString){
                self.updateStateToKernel(self, {"chromLocString": chromLocString});
                });
-       window.igvpshannon = igvBrowser  // for debugging
-       return(igvBrowser)
+       window.igvpshannon = self.igvBrowser  // for debugging
+       //return(self.igvBrowser)
        },
 
      //--------------------------------------------------------------------------------
      setGenome: function(msg){
        $('a[href="#igvTab"]').click();
         var self = this;
+        var genomeName = msg.payload;
         setTimeout(function(){
-	    self.igvBrowser = self.initializeIGV("hg38");},0);
+	    self.initializeIGV(genomeName);},0);
+	    //self.igvBrowser = self.initializeIGV(genomeName);},0);
         }, // setGenome
 
      //--------------------------------------------------------------------------------
      showGenomicRegion: function(msg){
 
-       $('a[href="#igvTab"]').click();
+        $('a[href="#igvTab"]').click();
         var self = this;
         var locString = msg.payload;
         console.log("about to showGenomicRegion: '" + locString + "'");
-        //setTimeout(function(){
-	 self.igvBrowser.search(locString);
-        //},0);
+        self.igvBrowser.search(locString);
         }, // showGenomicRegion
 
      //--------------------------------------------------------------------------------
@@ -271,6 +335,7 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
                       displayMode: displayMode,
                       sourceType: "file",
                       color: color,
+		      height: 300,
                       type: "annotation"};
          console.log(config);
          console.log(JSON.stringify(config))
