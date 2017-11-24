@@ -15,6 +15,9 @@ clean:
 run:
 	(cd ./examples/basicDemo; jupyter notebook --NotebookApp.token= simple.ipynb)
 
+runHome:
+	(cd ./examples/basicDemo; jupyter notebook --NotebookApp.token= )
+
 
 image:
 	docker build -t ipytrenaviz .

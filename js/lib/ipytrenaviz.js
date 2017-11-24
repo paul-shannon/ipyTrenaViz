@@ -310,23 +310,22 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
 	console.log(self)
 	console.log("--- self.igvBrowser:");
 	console.log(self.igvBrowser)
-        //var trackName = msg.payload.name;
-        //var bedFileName = msg.payload.bedFileName;
-        var trackName = "foo";
-        var bedFileName = "tmp.bed";
-        //var displayMode = msg.payload.displayMode;
-        var displayMode = "EXPANDED"
-        //var color = msg.payload.color;
-        var color = "red";
+        var trackName = msg.payload.trackName;
+        var bedFileName = msg.payload.bedFileName;
+        var displayMode = msg.payload.displayMode;
+        var color = msg.payload.color;
+        var trackHeight = msg.payload.trackHeight;
 
         var href = window.location.href;
 	var border = href.indexOf("/notebooks");
-	var url = href.substring(0, border) + "/edit/" + bedFileName;
+	//var url = href.substring(0, border) + "/edit/" + bedFileName;
         //var url = window.location.href + "?" + bedFileName;
 	//var url = "http://localhost:8871/edit/shared/tbl.bed";
+        var url = window.location.origin + "/files/" + bedFileName;
+        console.log("=== asking igv to load tract at " + url)
         // this full url works with jupy: "http://localhost:9999/tree/shared/tmp.bed"
         // note use of "tree" - not edit, not terminal, not notebooks
-        url = msg.payload.url
+        //url = msg.payload.url
         var config = {format: "bed",
                       name: trackName,
                       url: url,
@@ -334,10 +333,13 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
                       displayMode: displayMode,
                       sourceType: "file",
                       color: color,
-		      height: 300,
+		      height: trackHeight,
                       type: "annotation"};
          console.log(config);
          console.log(JSON.stringify(config))
+         console.log("=== about to loadTrack");
+	 console.log("self.igvBrowser: ");
+	 console.log(self.igvBrowser);
          window.loadTrackResult = self.igvBrowser.loadTrack(config);
 	 console.log("---- result of loadTrack:");
 	 console.log(window.loadTrackResult);

@@ -44,20 +44,29 @@ class ipyTrenaViz(widgets.DOMWidget):
        else:
           return("only %s genomes currently supported" % supportedGenomes)
 
+    #----------------------------------------------------------------------------------------------------
     def showPDB(self, pdbID):
        self.msgFromKernel = json.dumps({"cmd": "showPDB", "status": "request", "callback": "", "payload": pdbID})
 
+    #----------------------------------------------------------------------------------------------------
     def showGenomicRegion(self, regionString):
        self._resetMessage();
        self.msgFromKernel = json.dumps({"cmd": "showGenomicRegion", "status": "request", "callback": "", "payload": regionString})
 
-    def addBedTrackFromDataFrame(self, url):
+    #----------------------------------------------------------------------------------------------------
+    def addBedTrackFromDataFrame(self, tbl, trackName, trackMode, color, trackHeight=200):
        self._resetMessage();
-       payload = {"trackName": "fp",
-                  "bedFileName": "tbl.bed",
-                  "displayMode": "EXPANDED",
-                  "color": "lightgreen",
-                  "url": url}
+       supportedTrackModes = ["EXPANDED", "COLLAPSED", "SQUISHED"];
+
+       if(not trackMode.upper() in supportedTrackModes):
+         return("trackMode %s not in %s (case unimportant)" % (trackMode, supportedTrackModes))
+
+       tbl.to_csv("tbl.tsv", sep="\t", header=False, index=False)
+       payload = {"trackName": trackName,
+                  "bedFileName": "tbl.tsv",
+                  "displayMode": trackMode.upper(),
+                  "color": color,
+                  "trackHeight": trackHeight}
        self.msgFromKernel = json.dumps({"cmd": "addBedTrackFromDataFrame", "status": "request",
                                         "callback": "", "payload": payload})
 
