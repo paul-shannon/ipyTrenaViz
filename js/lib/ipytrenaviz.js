@@ -321,7 +321,7 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
 	//var url = href.substring(0, border) + "/edit/" + bedFileName;
         //var url = window.location.href + "?" + bedFileName;
 	//var url = "http://localhost:8871/edit/shared/tbl.bed";
-        var url = window.location.origin + "/files/" + bedFileName;
+        var url = window.location.origin + "/files/tmp/" + bedFileName;
         console.log("=== asking igv to load tract at " + url)
         // this full url works with jupy: "http://localhost:9999/tree/shared/tmp.bed"
         // note use of "tree" - not edit, not terminal, not notebooks
