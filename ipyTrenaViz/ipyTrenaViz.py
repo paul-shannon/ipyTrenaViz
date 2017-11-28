@@ -38,6 +38,7 @@ class ipyTrenaViz(widgets.DOMWidget):
        self.msgFromKernel = json.dumps({"cmd": "displayGraph", "status": "request", "callback": "", "payload": payload})
 
     def setGenome(self, genomeName):
+       print(" +++++ ipyTrenaViz.py, setGenome: " + genomeName)
        supportedGenomes = ["hg19", "hg38", "mm10"];
        if(genomeName in supportedGenomes):
           self.msgFromKernel = json.dumps({"cmd": "setGenome", "status": "request", "callback": "", "payload": genomeName})

@@ -21,6 +21,7 @@ runHome:
 
 image:
 	docker build -t ipytrenaviz .
+#	docker tag ipytrenaviz pshannon/ipytrenaviz:1344
 
 runDocker:
 	(cd ./examples/basicDemo; docker run -it --name ipytrenaviz bash)

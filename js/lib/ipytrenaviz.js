@@ -42,6 +42,7 @@ var ipyTrenaVizModel = widgets.DOMWidgetModel.extend({
 var ipyTrenaVizView = widgets.DOMWidgetView.extend({
 
     _requestCount: 0,
+    _browserState: {},    
 
    createDiv: function(){
       var self = this;
@@ -103,9 +104,11 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
       },
 
     //--------------------------------------------------------------------------------
-    updateStateToKernel: function(self, state){
+    updateStateToKernel: function(self, name, value){ // state){
 
-        var jsonString = JSON.stringify(state);
+        var self = this;
+	self._browserState[name] = value;
+        var jsonString = JSON.stringify(self._browserState)
         self.model.set("_browserState", jsonString);
         self.touch();
         },
@@ -116,33 +119,34 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
        console.log(" === entering dispatchRequest, this is ");
        console.log(this);
        console.log("dispatchRequest, count: " + this._requestCount);
-       this.updateStateToKernel(this, {requestCount: this._requestCount});
+       var self = this;
+       self.updateStateToKernel(this, "requestCount", self._requestCount)
 
-       this._requestCount += 1;
-       window.requestCount = this._requestCount;
+       self._requestCount += 1;
+       window.requestCount = self._requestCount;
 
-       var msgRaw = this.model.get("msgFromKernel");
+       var msgRaw = self.model.get("msgFromKernel");
        var msg = JSON.parse(msgRaw);
        console.log(msg);
        console.log("========================");
        switch(msg.cmd){
           case "writeToTab":
-             this.writeToTab(msg);
+             self.writeToTab(msg);
              break;
           case "raiseTab":
-              this.raiseTab(msg);
+              self.raiseTab(msg);
               break;
           case "setGenome":
-              this.setGenome(msg);
+              self.setGenome(msg);
               break;
           case "displayGraph":
-              this.displayGraph(msg);
+              self.displayGraph(msg);
               break;
           case "showGenomicRegion":
-              this.showGenomicRegion(msg);
+              self.showGenomicRegion(msg);
               break;
           case "addBedTrackFromDataFrame":
-	      this.addBedTrackFromDataFrame(msg);
+	      self.addBedTrackFromDataFrame(msg);
 	      break;
           case "cleanSlate":
               console.log("slate-cleaning msg received");
@@ -183,6 +187,7 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
      //--------------------------------------------------------------------------------
     initializeIGV: function(genomeName){
 
+       console.log("==== ipytrenaviz.js.initializeIGV, geneomeName: " + genomeName)
        var self = this;
 
        var hg38_options = {
@@ -271,12 +276,12 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
            console.log("igvOptions:");
            console.log(igvOptions);
 	   self.igvBrowser = igv.createBrowser($("#igvDiv"), igvOptions);
-           }, 0);
+           self.igvBrowser.on('locuschange',
+              function(referenceFrame, chromLocString){
+                 self.updateStateToKernel(self, "chromLocString", chromLocString)
+                 });
+            }, 0);
 
-       self.igvBrowser.on('locuschange',
-            function(referenceFrame, chromLocString){
-               self.updateStateToKernel(self, {"chromLocString": chromLocString});
-               });
        window.igvpshannon = self.igvBrowser  // for debugging
        //return(self.igvBrowser)
        },
@@ -286,6 +291,7 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
        $('a[href="#igvTab"]').click();
         var self = this;
         var genomeName = msg.payload;
+        console.log("~/github/ipyTrenaViz/js/lib/ipytrenaviz.js, setGenome: " + genomeName);
         setTimeout(function(){
 	    self.initializeIGV(genomeName);},0);
 	    //self.igvBrowser = self.initializeIGV(genomeName);},0);
