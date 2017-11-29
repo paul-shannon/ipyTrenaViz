@@ -42,7 +42,7 @@ var ipyTrenaVizModel = widgets.DOMWidgetModel.extend({
 var ipyTrenaVizView = widgets.DOMWidgetView.extend({
 
     _requestCount: 0,
-    _browserState: {},    
+    _browserState: {},
 
    createDiv: function(){
       var self = this;
@@ -53,6 +53,18 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
 
       var cyjsTab = $("<div id='cyjsTab'></div>");
       var cyjsDiv = $("<div id='cyjsDiv'></div>");
+      var cyMenubarDiv = $("<div id='cyMenubarDiv'></div>");
+      cyMenubarDiv.append($("<button id='cyFitButton' class='cyMenuButton'>Fit</button>"));
+      cyMenubarDiv.append($("<button id='cyFitSelectedButton'class='cyMenuButton'>Fit Selected</button>"));
+      cyMenubarDiv.append($("<button id='cySFNButton' class='cyMenuButton'>SFN</button>"));
+      cyMenubarDiv.append($("<button id='cyHideUnselectedButton' class='cyMenuButton'>Hide Unselected</button>"));
+      cyMenubarDiv.append($("<button id='cyShowAllButton' class='cyMenuButton'>Show All</button>"));
+      cyMenubarDiv.append($("<button id='cyCycleThroughModelsButton' class='cyMenuButton'>Cycle Models</button>"));
+
+
+
+
+      cyjsTab.append(cyMenubarDiv);
       cyjsTab.append(cyjsDiv);
 
       var igvTab = $("<div id='igvTab'></div>");
@@ -104,6 +116,98 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
       },
 
     //--------------------------------------------------------------------------------
+    configureCyjsMenuButtons: function(){
+
+        var self = this;
+        console.log("--- entering configureCyjsMenuButons");
+	console.log(self.cyjs)
+
+        $("#cyFitButton").unbind();
+	$("#cyFitSelectedButton").unbind();
+	$("#cySFNButton").unbind();
+        $("#cyHideUnselectedButton").unbind();
+        $("#cyShowAllButton").unbind();
+        $("#cyCycleThroughModelsButton").unbind();
+
+        $("#cyFitButton").click(function(){self.cyjs.fit(50)});
+        $("#cyFitSelectedButton").click(function(){self.cyjs.fit(self.cyjs.nodes(":selected"), 50)});
+        $("#cySFNButton").click(function(){
+           var selectedNodes = self.cyjs.nodes(":selected");
+	   console.log("   selected node count: " + selectedNodes.length);
+	   var neighborhoodNodes = selectedNodes.neighborhood().nodes();
+	   console.log("   neighborhood node count: " + neighborhoodNodes.length);
+	   neighborhoodNodes.select()
+	   var newSelectedNodes = self.cyjs.nodes(":selected");
+	   console.log("    new selected node count: " + newSelectedNodes.length);
+	   });
+        $("#cyHideUnselectedButton").click(function(){self.cyjs.nodes(":unselected").hide()});
+        $("#cyShowAllButton").click(function(){self.cyjs.nodes().show(); self.cyjs.edges().show()});
+
+        $("#cyCycleThroughModelsButton").click(function(){
+            var nextModelName = self.nextCyModelName(self);
+            console.log("cycle through to " + nextModelName);
+            self.displayCyModel(self, nextModelName);
+            });
+         },
+
+    //--------------------------------------------------------------------------------
+    nextCyModelName: function(self){
+
+        console.log("--- nextCyModelName: ");
+        console.log(self)
+
+        var currentModelNameIndex = self.modelNames.indexOf(self.currentModelName)
+        var nextModelNameIndex = currentModelNameIndex + 1;
+        var lastIndex = self.modelNames.length - 1
+
+        if(nextModelNameIndex > lastIndex){
+           nextModelNameIndex = 0;
+           }
+
+        var modelName = self.modelNames[nextModelNameIndex]
+        console.log(" next up is model name " + nextModelNameIndex + ": " + modelName);
+
+        return(modelName)
+        }, // nextCyModelName
+
+      //----------------------------------------------------------------------------------------------------
+      displayCyModel: function(self, modelName){
+
+         console.log("--- displayCyModel: " + modelName);
+         console.log(self)
+
+           // make all nodes visible.  some may have been hidden in the previous view
+         self.cyjs.nodes().show()
+           // rfScore and pearsonCoeff are the current popular node attributes
+           // for controlling size and color.  set them, for all TF nodes, to zero
+         self.cyjs.nodes().filter(function(node){return node.data("type") == "TF"}).map(function(node){node.data({"rfScore": 0})})
+         self.cyjs.nodes().filter(function(node){return node.data("type") == "TF"}).map(function(node){node.data({"pearsonCoeff": 0})})
+
+            // transfer all <modelName>.rf_score to simply "rf_score"
+         var noaName = modelName + "." + "rfScore";
+         console.log("--- copying " + noaName + " values to rfSscore");
+         self.cyjs.nodes("[type='TF']").map(function(node){node.data({"rfScore":  node.data(noaName)})})
+
+         noaName = modelName + "." + "pearsonCoeff";
+         console.log("--- copying " + noaName + " values to pearsonCoeff");
+         self.cyjs.nodes("[type='TF']").map(function(node){node.data({"pearsonCoeff":       node.data(noaName)})})
+
+           // now hide all the 0 randomForest TF nodes
+         self.cyjs.nodes().filter(function(node){return(node.data("rfScore") == 0 && node.data("type") == "TF")}).hide()
+
+           // transfer the "motifInModel" node attribute
+         noaName = modelName + "." + "motifInModel";
+         self.cyjs.nodes("[type='regulatoryRegion']").map(function(node){node.data({"motifInModel": node.data(noaName)})})
+
+         self.cyjs.nodes().filter(function(node){return(node.data("motifInModel") == "FALSE" &&
+                                                       node.data("type") == "regulatoryRegion")}).hide()
+
+         $("#cyModelSelector").val(modelName);
+         self.currentModelName = modelName;
+
+         }, // displayCyModel
+
+    //--------------------------------------------------------------------------------
     updateStateToKernel: function(self, name, value){ // state){
 
         var self = this;
@@ -136,11 +240,17 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
           case "raiseTab":
               self.raiseTab(msg);
               break;
+          case "setWidgetHeight":
+              $("#tabsOuterDiv").height(msg.payload);
+              break;
           case "setGenome":
               self.setGenome(msg);
               break;
-          case "displayGraph":
-              self.displayGraph(msg);
+          case "displayGraphFromFile":
+              self.displayGraphFromFile(msg);
+              break;
+          case "setStyle":
+              self.setStyle(msg);
               break;
           case "showGenomicRegion":
               self.showGenomicRegion(msg);
@@ -294,7 +404,6 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
         console.log("~/github/ipyTrenaViz/js/lib/ipytrenaviz.js, setGenome: " + genomeName);
         setTimeout(function(){
 	    self.initializeIGV(genomeName);},0);
-	    //self.igvBrowser = self.initializeIGV(genomeName);},0);
         }, // setGenome
 
      //--------------------------------------------------------------------------------
@@ -368,24 +477,90 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
          return "SUCCESS";
          }, // readNetworkFromFile
 
-     //--------------------------------------------------------------------------------
-     displayGraph: function(msg){
+     //----------------------------------------------------------------------------------------------------
+     displayGraphFromFile: function(msg){
+
        $('a[href="#cyjsTab"]').click();
         var self = this;
         self.cyjs = self.createCyjs();
+        window.cyjs = self.cyjs;
+        self.configureCyjsMenuButtons()
 
         setTimeout(function(){self.cyjs.fit(100);}, 500);
+
         var filename = msg.payload.filename;
 	var modelNames = msg.payload.modelNames
+
+        $("#cyModelSelector").remove()  // delete the old menu
+
         if(typeof(modelNames) == "string")
            modelNames = [modelNames];
+        if(modelNames.length > 1){
+           self.createModelNamesMenu(self, modelNames);
+           }
+        self.modelNames = modelNames;  // make this an attribute of the trenaviz object
+        self.currentModelName = modelNames[0];
+
         console.log("about to load file into cyjs: " + filename)
         console.log("     for modelNames[0]: " + modelNames[0]);
         self.readNetworkFromFile(filename, self.cyjs)
+        setTimeout(function() {self.displayCyModel(self, modelNames[0]);}, 1000);
         }, // displayGraph
 
+     //--------------------------------------------------------------------------------
+     createModelNamesMenu: function(self, modelNames){
+
+        if(typeof(modelNames) == "string"){
+          modelNames = [modelNames];
+          }
+
+        if(modelNames.length < 1){
+           return;
+           }
+        var html = "<select id='cyModelSelector' class='cyMenuButton'>"
+        for(var i=0; i < modelNames.length; i++){
+           html += "<option value='" + modelNames[i] + "'> " + modelNames[i]  + "</option>";
+           } // for i
+         html += "</select>"
+
+         $("#cyMenubarDiv").append(html);
+         $("#cyModelSelector").change(function(){
+             var modelName =$(this).find("option:selected").val();
+             self.displayCyModel(self, modelName);
+             });
+
+          setTimeout(function() {self.displayCyModel(self, modelNames[0])}, 0);
+
+         }, // createModelNamesMenu
 
      //--------------------------------------------------------------------------------
+     loadStyleFile: function(filename, cyTarget){
+
+        console.log("ipytrenaviz.loadStyleFile, filename: " + filename);
+        //var s = window.location.href + "?" + filename;
+        console.log("=== about to getScript on " + filename);
+        $.getScript(filename)
+            .done(function(script, textStatus) {
+            console.log(textStatus);
+            //console.log("style elements " + layout.length);
+            cyTarget.style(vizmap);
+            })
+        .fail(function( jqxhr, settings, exception ) {
+            console.log("getScript error trying to read " + filename);
+            console.log("exception: ");
+            console.log(exception);
+            });
+       }, // loadStyle
+
+     //--------------------------------------------------------------------------------
+     setStyle: function(msg){
+
+       var self = this;
+        $('a[href="#cyjsTab"]').click();
+        var filename = msg.payload;
+        self.loadStyleFile(filename, self.cyjs)
+        }
+
    }); // ipyTrenaVizView
 
 

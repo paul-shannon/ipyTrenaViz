@@ -14,9 +14,26 @@
    width: 100%;
    }
 
+#cyjsTab{
+   padding: 1px;
+   }
+
 #cyjsDiv{
-   border: 3px solid purple;
+   border: 1px solid purple;
    border-radius: 3px;
    height: 720px;
    width: 100%;
    }
+
+#cyMenubarDiv{
+  margin: 2px;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  }
+
+.cyMenuButton{
+  margin-left: 6px;
+  margin-bottom: 6px;
+  margin-top: 8px;
+  background-color: #E8E8E8;
+  }

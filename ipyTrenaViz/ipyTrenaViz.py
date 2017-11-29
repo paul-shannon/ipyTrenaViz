@@ -15,28 +15,46 @@ class ipyTrenaViz(widgets.DOMWidget):
     _browserState = Unicode("").tag(sync=True)
 
 
+    #----------------------------------------------------------------------------------------------------
     def writeToTab(self, tabNumber, msg):
        payload = {"tabNumber": tabNumber, "msg": msg};
        self.msgFromKernel = json.dumps({"cmd": "writeToTab", "status": "request", "callback": "", "payload": payload})
 
-        # messages are only transmitted to the browser when it changes; duplicate messages are simply ignored.
-        # this next method ensures that any ensuing message is seen as novel in the browser
+    #----------------------------------------------------------------------------------------------------
+    # messages are only transmitted to the browser when it changes; duplicate messages are simply ignored.
+    # this next method ensures that any ensuing message is seen as novel in the browser
     def _resetMessage(self):
        self.msgFromKernel = json.dumps({"cmd": "cleanSlate", "status": "nop", "callback": "", "payload": ""});
 
+    #----------------------------------------------------------------------------------------------------
     def raiseTab(self, tabName):
        self.msgFromKernel = json.dumps({"cmd": "raiseTab", "status": "request", "callback": "", "payload": tabName})
 
+    #----------------------------------------------------------------------------------------------------
+    def setWidgetHeight(self, newHeightInPixels):
+
+       self.msgFromKernel = json.dumps({"cmd": "setWidgetHeight", "status": "request", "callback": "",
+                                        "payload": newHeightInPixels})
+
+    #----------------------------------------------------------------------------------------------------
     def getBrowserState(self):
         return(json.loads(self._browserState));
 
+    #----------------------------------------------------------------------------------------------------
     def getRequestCount(self):
         return(self.getBrowserState()["requestCount"])
 
-    def displayGraph(self, filename, modelNames):
+    #----------------------------------------------------------------------------------------------------
+    def displayGraphFromFile(self, filename, modelNames):
        payload = {"filename": filename, "modelNames": modelNames}
-       self.msgFromKernel = json.dumps({"cmd": "displayGraph", "status": "request", "callback": "", "payload": payload})
+       self.msgFromKernel = json.dumps({"cmd": "displayGraphFromFile", "status": "request", "callback": "", "payload": payload})
 
+    #----------------------------------------------------------------------------------------------------
+    def setStyle(self, filename):
+       payload = filename
+       self.msgFromKernel = json.dumps({"cmd": "setStyle", "status": "request", "callback": "", "payload": payload})
+
+    #----------------------------------------------------------------------------------------------------
     def setGenome(self, genomeName):
        supportedGenomes = ["hg19", "hg38", "mm10"];
        if(genomeName in supportedGenomes):
@@ -70,5 +88,6 @@ class ipyTrenaViz(widgets.DOMWidget):
        self.msgFromKernel = json.dumps({"cmd": "addBedTrackFromDataFrame", "status": "request",
                                         "callback": "", "payload": payload})
 
+    #----------------------------------------------------------------------------------------------------
 
 

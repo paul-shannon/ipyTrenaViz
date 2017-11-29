@@ -13,7 +13,7 @@ clean:
 
 
 run:
-	(cd ./examples/basicDemo; jupyter notebook --NotebookApp.token= simple.ipynb)
+	(cd ./examples/basicDemo; jupyter notebook --NotebookApp.token= tester.ipynb)
 
 runHome:
 	(cd ./examples/basicDemo; jupyter notebook --NotebookApp.token= )
