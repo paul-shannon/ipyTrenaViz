@@ -79,7 +79,7 @@ class ipyTrenaViz(widgets.DOMWidget):
        if(not trackMode.upper() in supportedTrackModes):
          return("trackMode %s not in %s (case unimportant)" % (trackMode, supportedTrackModes))
 
-       tbl.to_csv("tmp/tbl.tsv", sep="\t", header=False, index=False)
+       tbl.to_csv("tbl.tsv", sep="\t", header=False, index=False)
        payload = {"trackName": trackName,
                   "bedFileName": "tbl.tsv",
                   "displayMode": trackMode.upper(),
