@@ -436,7 +436,27 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
 	//var url = href.substring(0, border) + "/edit/" + bedFileName;
         //var url = window.location.href + "?" + bedFileName;
 	//var url = "http://localhost:8871/edit/shared/tbl.bed";
-        var url = window.location.origin + "/files/" + bedFileName;
+        // befFileName is written into the current working directory
+        // this may be ascertained by examining window.location.pathname
+        // and extracting the zero-or-more subdirectories between
+        // "/notebooks/subDir/tester.ipynb"
+        // split("/"): ["", "notebooks", "subDir", "tester.ipynb"]
+        var subDirs = ""
+        var tokens = window.location.pathname.split("/")
+        if(tokens.length > 3){
+           subDirs = tokens.slice(2, tokens.length-1).join("/")
+	   }
+        var elements = []
+	elements.push(window.location.origin);
+	elements.push("files");
+        console.log("=== subDirs: " + subDirs);
+        if(subDirs != ""){
+          elements.push(subDirs);
+	  }
+	elements.push(bedFileName)
+	var url = elements.join("/")
+        //var url = window.location.origin + "/files/" + bedFileName;
+        console.log("=== constructing igv url from " + window.location.pathname)
         console.log("=== asking igv to load tract at " + url)
         // this full url works with jupy: "http://localhost:9999/tree/shared/tmp.bed"
         // note use of "tree" - not edit, not terminal, not notebooks
