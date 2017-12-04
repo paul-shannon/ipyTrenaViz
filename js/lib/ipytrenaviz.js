@@ -62,8 +62,6 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
       cyMenubarDiv.append($("<button id='cyCycleThroughModelsButton' class='cyMenuButton'>Cycle Models</button>"));
 
 
-
-
       cyjsTab.append(cyMenubarDiv);
       cyjsTab.append(cyjsDiv);
 
@@ -250,7 +248,7 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
               self.displayGraphFromFile(msg);
               break;
           case "setStyle":
-              self.setStyle(msg);
+              self.setCyStyle(msg);
               break;
           case "showGenomicRegion":
               self.showGenomicRegion(msg);
@@ -403,7 +401,7 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
         var genomeName = msg.payload;
         console.log("~/github/ipyTrenaViz/js/lib/ipytrenaviz.js, setGenome: " + genomeName);
         setTimeout(function(){
-	    self.initializeIGV(genomeName);},0);
+           self.initializeIGV(genomeName);}, 1000);
         }, // setGenome
 
      //--------------------------------------------------------------------------------
@@ -573,9 +571,11 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
        }, // loadStyle
 
      //--------------------------------------------------------------------------------
-     setStyle: function(msg){
+     setCyStyle: function(msg){
 
        var self = this;
+        console.log("--- ipytrenaviz.js, setCyStyle, msg:");
+        console.log(msg);
         $('a[href="#cyjsTab"]').click();
         var filename = msg.payload;
         self.loadStyleFile(filename, self.cyjs)
