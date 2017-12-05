@@ -197,7 +197,7 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
          noaName = modelName + "." + "motifInModel";
          self.cyjs.nodes("[type='regulatoryRegion']").map(function(node){node.data({"motifInModel": node.data(noaName)})})
 
-         self.cyjs.nodes().filter(function(node){return(node.data("motifInModel") == "FALSE" &&
+         self.cyjs.nodes().filter(function(node){return(node.data("motifInModel") == false &&
                                                        node.data("type") == "regulatoryRegion")}).hide()
 
          $("#cyModelSelector").val(modelName);
