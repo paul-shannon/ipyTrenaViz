@@ -240,6 +240,10 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
               break;
           case "setWidgetHeight":
               $("#tabsOuterDiv").height(msg.payload);
+	         // ascend the element hierarchy to find the first jupyter scrollable
+                 // output div -- which class may change in time, but direct inspection
+                 // shows today (10 jan 2018) is of class "output_scroll"
+              $("#tabsOuterDiv").closest(".output_scroll").height(msg.payload)
               break;
           case "setGenome":
               self.setGenome(msg);
