@@ -4,7 +4,7 @@ var cytoscape = require('cytoscape');
 var igv = require('igv')
 require('igv/igv.css')
 
-require('../css/ipytrenaviz.css')
+//require('../css/ipytrenaviz.css')
 
 //var igv = require('igv')
 //require('igv/igv.css')

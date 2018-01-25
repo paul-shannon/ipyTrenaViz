@@ -4,6 +4,7 @@ build:
 	pip install -e .
 	jupyter nbextension install --user --py ipyTrenaViz
 	jupyter nbextension enable --user --py --sys-prefix ipyTrenaViz
+	#jupyter labextension install js/
 
 clean:
 	- rm -rf js/node_modules/*
@@ -13,7 +14,7 @@ clean:
 
 
 run:
-	(cd ./examples/basicDemo; jupyter notebook --NotebookApp.token= tester.ipynb)
+	(cd ./examples/basicDemo; jupyter notebook --NotebookApp.token="")
 
 runHome:
 	(cd ./examples/basicDemo; jupyter notebook --NotebookApp.token= )
@@ -21,7 +22,7 @@ runHome:
 
 image:
 	docker build -t ipytrenaviz .
-	docker tag ipytrenaviz pshannon/ipytrenaviz:v0.9.10
+	docker tag ipytrenaviz pshannon/ipytrenaviz:v0.9.11
 
 runDocker:
 	(cd ./examples/basicDemo; docker run -it --name ipytrenaviz bash)
