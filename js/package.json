@@ -1,6 +1,6 @@
 {
   "name": "ipyTrenaViz",
-  "version": "0.1.0",
+  "version": "0.9.12",
   "description": "trenaViz widgets for jupyter notebooks",
   "author": "Paul Shannon",
   "main": "lib/index.js",
@@ -36,7 +36,7 @@
     "cytoscape": "^3.2.4",
     "datatables": "^1.10.13",
     "jquery-ui": "^1.12.1",
-    "igv": "0.1.1"
+    "igv_js_npm": "github:paul-shannon/igv.js.npm"
   }
 
 }

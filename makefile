@@ -1,4 +1,4 @@
-build:
+buildWidget:
 	(cd ./js; npm update)
 	(cd ./js; webpack --config webpack.config.js)
 	pip install -e .
@@ -22,7 +22,7 @@ runHome:
 
 image:
 	docker build -t ipytrenaviz .
-	docker tag ipytrenaviz pshannon/ipytrenaviz:v0.9.11
+	docker tag ipytrenaviz pshannon/ipytrenaviz:v0.9.12
 
 runDocker:
 	(cd ./examples/basicDemo; docker run -it --name ipytrenaviz bash)

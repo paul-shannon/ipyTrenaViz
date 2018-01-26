@@ -1,10 +1,18 @@
 var widgets = require('@jupyter-widgets/base');
 var _ = require('lodash');
 var cytoscape = require('cytoscape');
-var igv = require('igv')
-require('igv/igv.css')
 
-//require('../css/ipytrenaviz.css')
+//--------------------------------------------------------------------------------
+// configure igv where package.json says
+//        "igv_js_npm": "github:paul-shannon/igv.js.npm"
+//--------------------------------------------------------------------------------
+var igv = require('igv.js.npm')
+require('igv.js.npm/igv.css')
+//--------------------------------------------------------------------------------
+// configure igv where package.json says
+//        "igv": "^0.1.1"
+//--------------------------------------------------------------------------------
+require('../css/ipytrenaviz.css')
 
 //var igv = require('igv')
 //require('igv/igv.css')
