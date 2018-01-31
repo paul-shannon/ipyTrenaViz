@@ -14,10 +14,9 @@ But to get started, these steps should get you most or all of the way:
   -   conda update -c conda-forge jupyter
   - conda install -c conda-forge jupyterlab
   -  conda upgrade -c conda-forge notebook
-  -  jupyter --version; jupyter notebook --version; jupyter lab --version
-     4.4.0
-     5.3.1
-     0.31.1
+  - jupyter --version   # 4.4.0
+  - jupyter notebook --version  # 5.3.1
+  - jupyter lab --version # 0.31.1
   - study the inlucded <b>makefile</b> and its <b>buildWidget</b> target
   - only the "docker tag" command is specific to my installation
   
