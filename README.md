@@ -21,3 +21,7 @@ But to get started, these steps should get you most or all of the way:
   - study the inlucded <b>makefile</b> and its <b>buildWidget</b> target
   - only the "docker tag" command is specific to my installation
   
+The project directory structure and configuration files (for npm, webpack, jupyter lab) are also complicated.
+Luckily, the ipywidget/jupyterLab team provides a template to get you started in creating a new widget from scratch.
+
+https://github.com/jupyter-widgets/widget-cookiecutter
