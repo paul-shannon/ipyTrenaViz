@@ -324,7 +324,7 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
                   indexURL: "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg38/genes/gencode.v24.annotation.sorted.gtf.gz.tbi",
                   type: 'annotation',
                   format: 'gtf',
-                  visibilityWindow: 500000,
+                  visibilityWindow: 1200000,
                   displayMode: 'EXPANDED',
                   color: 'black',
                   height: 300
