@@ -1,7 +1,7 @@
 {
   "name": "ipyTrenaViz",
-  "version": "0.9.13",
-  "date": "30jan2018",
+  "version": "0.9.14",
+  "date": "09feb2018",
   "description": "trenaViz widgets for jupyter notebooks",
   "author": "Paul Shannon",
   "main": "lib/index.js",

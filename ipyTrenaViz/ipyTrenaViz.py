@@ -1,5 +1,6 @@
 import ipywidgets as widgets
 from traitlets import Int, Unicode, Tuple, CInt, Dict, validate, observe
+from datetime import datetime
 import json
 
 @widgets.register
@@ -79,9 +80,10 @@ class ipyTrenaViz(widgets.DOMWidget):
        if(not trackMode.upper() in supportedTrackModes):
          return("trackMode %s not in %s (case unimportant)" % (trackMode, supportedTrackModes))
 
-       tbl.to_csv("tbl.tsv", sep="\t", header=False, index=False)
+       tempFileName = "tbl%d.tsv" % datetime.now().microsecond
+       tbl.to_csv(tempFileName, sep="\t", header=False, index=False)
        payload = {"trackName": trackName,
-                  "bedFileName": "tbl.tsv",
+                  "bedFileName": tempFileName,
                   "displayMode": trackMode.upper(),
                   "color": color,
                   "trackHeight": trackHeight}
