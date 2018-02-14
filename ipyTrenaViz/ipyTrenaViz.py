@@ -2,6 +2,7 @@ import ipywidgets as widgets
 from traitlets import Int, Unicode, Tuple, CInt, Dict, validate, observe
 from datetime import datetime
 import json
+import pandas as pd
 
 @widgets.register
 class ipyTrenaViz(widgets.DOMWidget):
@@ -92,9 +93,17 @@ class ipyTrenaViz(widgets.DOMWidget):
 
     #----------------------------------------------------------------------------------------------------
     def removeTracksByName(self, trackNames):
+
        self._resetMessage();
        payload = trackNames
        self.msgFromKernel = json.dumps({"cmd": "removeTracksByName", "status": "request",
                                         "callback": "", "payload": payload})
 
+    #----------------------------------------------------------------------------------------------------
+    def makeMark(self, chrom, start, end, trackName, color):
+
+       tbl = pd.DataFrame([[chrom, start, end, trackName]])
+       self.addBedTrackFromDataFrame(tbl, trackName, "EXPANDED", color, 50)
+
+    #----------------------------------------------------------------------------------------------------
 
