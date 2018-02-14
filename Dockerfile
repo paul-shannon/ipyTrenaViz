@@ -16,4 +16,5 @@ RUN (cd ./js; npm install)
 USER jovyan
 RUN jupyter nbextension install --user --py ipyTrenaViz
 RUN jupyter nbextension enable --user --py --sys-prefix ipyTrenaViz
-
+#RUN pip install jupyter_dashboards
+#RUN jupyter dashboards quick-setup --sys-prefix

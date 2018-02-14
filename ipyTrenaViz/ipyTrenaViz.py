@@ -91,5 +91,10 @@ class ipyTrenaViz(widgets.DOMWidget):
                                         "callback": "", "payload": payload})
 
     #----------------------------------------------------------------------------------------------------
+    def removeTracksByName(self, trackNames):
+       self._resetMessage();
+       payload = trackNames
+       self.msgFromKernel = json.dumps({"cmd": "removeTracksByName", "status": "request",
+                                        "callback": "", "payload": payload})
 
 

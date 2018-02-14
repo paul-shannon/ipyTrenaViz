@@ -268,6 +268,9 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
           case "addBedTrackFromDataFrame":
 	      self.addBedTrackFromDataFrame(msg);
 	      break;
+          case "removeTracksByName":
+	      self.removeTracksByName(msg);
+	      break;
           case "cleanSlate":
               console.log("slate-cleaning msg received");
               break;
@@ -396,13 +399,17 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
            console.log("igvOptions:");
            console.log(igvOptions);
 	   self.igvBrowser = igv.createBrowser($("#igvDiv"), igvOptions);
+           console.log("about to assign window.igvX")
+           console.log(self.igvBrowser);
+           window.igvX = self.igvBrowser
+           console.log("after assignement, window.igvX:")
+           console.log(window.igvX)
            self.igvBrowser.on('locuschange',
               function(referenceFrame, chromLocString){
                  self.updateStateToKernel(self, "chromLocString", chromLocString)
                  });
             }, 0);
 
-       window.igvpshannon = self.igvBrowser  // for debugging
        //return(self.igvBrowser)
        },
 
@@ -425,6 +432,29 @@ var ipyTrenaVizView = widgets.DOMWidgetView.extend({
         console.log("about to showGenomicRegion: '" + locString + "'");
         self.igvBrowser.search(locString);
         }, // showGenomicRegion
+
+     //--------------------------------------------------------------------------------
+     removeTracksByName: function(msg){
+
+        console.log("ipyTrenaViz/ipytrenaviz.js, removeTracksByName");
+        var self = this;
+
+	var trackNames = msg.payload;
+        if(typeof(trackNames) == "string")
+           trackNames = [trackNames];
+
+        var count = self.igvBrowser.trackViews.length;
+
+        for(var i=(count-1); i >= 0; i--){
+          var trackView = self.igvBrowser.trackViews[i];
+          var trackViewName = trackView.track.name;
+          var matched = trackNames.indexOf(trackViewName) >= 0;
+          console.log(" is " + trackViewName + " in " + JSON.stringify(trackNames) + "? " + matched);
+          if (matched){
+             self.igvBrowser.removeTrack(trackView.track);
+             } // if matched
+          } // for i
+        }, // removeTracksByName
 
      //--------------------------------------------------------------------------------
      addBedTrackFromDataFrame: function(msg){
