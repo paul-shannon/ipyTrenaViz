@@ -22,7 +22,7 @@ runHome:
 
 image:
 	docker build -t ipytrenaviz .
-	docker tag ipytrenaviz pshannon/ipytrenaviz:v0.9.17
+	docker tag ipytrenaviz pshannon/ipytrenaviz:v0.9.18
 
 runDocker:
 	(cd ./examples/basicDemo; docker run -it -p 8892:8888 ipytrenaviz)  # localhost:8892
